@@ -149,6 +149,20 @@ def test_updated_current_document_changes_conflict_to_answer(tmp_path):
     assert any(c["version_date"] == "2026-01-01" for c in after["citations"])
 
 
+def test_new_positive_values_and_versions_are_used_from_updated_documents(tmp_path):
+    docs = json.loads(DOCS.read_text())
+    for doc in docs[:2]:
+        doc["passage"] = "差旅费用须在费用发生后45天内提交报销。"
+        doc["value"] = "45天"
+        doc["version_date"] = "2026-02-01"
+    path = tmp_path / "documents.json"
+    path.write_text(json.dumps(docs, ensure_ascii=False))
+    output = run_mock(service("差旅报销期限多久？", data=path))
+    assert output["status"] == "completed"
+    assert "45天" in output["answer"] and "15天" not in output["answer"]
+    assert {citation["version_date"] for citation in output["citations"]} == {"2026-02-01"}
+
+
 def test_changed_passage_with_stale_metadata_is_rejected(tmp_path):
     docs = json.loads(DOCS.read_text())
     docs[0]["passage"] = "差旅费用须在费用发生后45天内提交报销。"
@@ -182,9 +196,10 @@ def test_unrelated_model_search_cannot_create_answer():
     for doc_id in ("D01", "D02"):
         worker.call("read_excerpt", {"document_id": doc_id, "reason": "读取"})
     output = worker.output({"status": "completed"}, {"decision": "answer", "document_ids": ["D01", "D02"]})
-    assert output["status"] == "incomplete"
-    assert output["reason"] == "out_of_scope"
+    assert output["status"] == "needs_clarification"
+    assert output["reason"] == "unverified_rewrite"
     assert not output["answer"] and not output["citations"]
+    assert {item["document_id"] for item in output["unverified_candidates"]} == {"D01", "D02"}
 
 
 def test_numeric_suffix_is_not_a_valid_value_match(tmp_path):
@@ -320,3 +335,92 @@ def test_scope_followed_by_exclusion_is_rejected(tmp_path):
     path.write_text(json.dumps(docs, ensure_ascii=False))
     with pytest.raises(ValueError, match="适用范围"):
         load_documents(path)
+
+
+def test_scope_cannot_be_omitted_when_the_passage_has_one(tmp_path):
+    docs = json.loads(DOCS.read_text())
+    docs[2].pop("scope")
+    path = tmp_path / "documents.json"
+    path.write_text(json.dumps(docs, ensure_ascii=False))
+    with pytest.raises(ValueError, match="标注与原文不一致"):
+        load_documents(path)
+
+
+@pytest.mark.parametrize("question", ["报账期限多久？", "出差票据多久内提交？", "差旅账单期限多久？"])
+def test_rewritten_search_preserves_anchored_conflicting_evidence(question):
+    worker = service(question)
+    assert worker.call("search_documents", {"query": question, "reason": "先按原问题检索"})["candidates"] == []
+    hits = worker.call("search_documents", {"query": "差旅报销期限", "reason": "改写检索"})["candidates"]
+    for item in hits:
+        worker.call("read_excerpt", {"document_id": item["id"], "reason": "核实原文"})
+    result = worker.output({"status": "completed"}, {"decision": "clarify", "document_ids": [x["id"] for x in hits]})
+    assert result["reason"] == "conflicting_sources"
+    assert {x["document_id"] for x in result["citations"]} == {"D01", "D02"}
+    assert "15天" in result["answer"] and "30天" in result["answer"]
+
+
+def test_known_synonym_rewrite_is_used_by_mock_without_claiming_model_decision():
+    result = run_mock(service("报账期限多久？"))
+    assert result["status"] == "needs_clarification"
+    assert result["reason"] == "conflicting_sources"
+    assert [x["tool"] for x in result["trace"][:2]] == ["search_documents", "search_documents"]
+    assert result["terminal"]["source"] == "scripted_mock"
+
+
+@pytest.mark.parametrize("question", [
+    "新员工开通协作平台账号需要多久？",
+    "新员工申请开通协作平台账号要多久？",
+    "新员工什么时候需要开通协作平台账号？",
+])
+def test_availability_is_not_a_processing_duration_or_obligation(question):
+    result = run_mock(service(question))
+    assert result["status"] == "incomplete"
+    assert result["reason"] == "unsupported_question_aspect"
+    assert result["missing_information"] and result["citations"][0]["document_id"] == "D03"
+
+
+@pytest.mark.parametrize("passage", [
+    "差旅费用报销期限不是30天。",
+    "差旅费用不应在费用发生后30天内提交报销。",
+    "差旅费用须在费用发生后30天内提交报销，但这不适用。",
+])
+def test_unparseable_or_negated_statement_is_not_trusted(tmp_path, passage):
+    docs = json.loads(DOCS.read_text())
+    docs[0]["passage"] = passage
+    path = tmp_path / "documents.json"
+    path.write_text(json.dumps(docs, ensure_ascii=False))
+    with pytest.raises(ValueError, match="正向事实格式|否定"):
+        load_documents(path)
+
+
+def test_matching_topic_and_aspect_conflict_even_with_different_keys(tmp_path):
+    docs = json.loads(DOCS.read_text())
+    docs[1]["key"] = "expense_deadline_other_team"
+    docs[1]["aliases"] = ["发票提交期限"]
+    path = tmp_path / "documents.json"
+    path.write_text(json.dumps(docs, ensure_ascii=False))
+    result = run_mock(service("差旅报销期限多久？", data=path))
+    assert result["status"] == "needs_clarification"
+    assert result["reason"] == "conflicting_sources"
+    assert {x["document_id"] for x in result["citations"]} == {"D01", "D02"}
+
+
+def test_trace_distinguishes_same_message_and_observed_results():
+    worker = service("新员工什么时候可以开通协作平台账号？")
+    search_args = {"query": "协作平台", "reason": "检索"}
+    read_args = {"document_id": "D03", "reason": "读取"}
+    submit_args = {"decision": "answer", "document_ids": ["D03"], "reason": "回答"}
+    for name, args in [("search_documents", search_args), ("read_excerpt", read_args), ("submit_decision", submit_args)]:
+        worker.call(name, args)
+    sdk_events = [
+        {"type": "tool_request", "tool_use_id": "a", "message_id": "m1", "tool": "mcp__knowledge__search_documents", "arguments": search_args},
+        {"type": "tool_result", "tool_use_id": "a", "is_error": False},
+        {"type": "tool_request", "tool_use_id": "b", "message_id": "m1", "tool": "mcp__knowledge__read_excerpt", "arguments": read_args},
+        {"type": "tool_result", "tool_use_id": "b", "is_error": False},
+        {"type": "tool_request", "tool_use_id": "c", "message_id": "m2", "tool": "mcp__knowledge__submit_decision", "arguments": submit_args},
+        {"type": "tool_result", "tool_use_id": "c", "is_error": False},
+    ]
+    result = worker.output({"status": "completed", "sdk_events": sdk_events}, worker.submitted_decision)
+    assert result["trace"][0]["next_action_relation"] == "same_model_message"
+    assert result["trace"][1]["next_action_relation"] == "after_tool_result"
+    assert result["trace"][2]["next_action_relation"] == "terminal"

@@ -1,0 +1,90 @@
+{
+  "mode": "mock",
+  "question": "新员工开通协作平台账号需要多久？",
+  "status": "incomplete",
+  "answer": "以下原文仅供参考，不能回答完整问题：\n[D03 2025-04-01] 新员工可在入职当天通过企业服务台开通协作平台账号。",
+  "citations": [
+    {
+      "document_id": "D03",
+      "version_date": "2025-04-01",
+      "title": "员工协作平台账号指南",
+      "excerpt": "新员工可在入职当天通过企业服务台开通协作平台账号。"
+    }
+  ],
+  "missing_information": [
+    "新员工开通协作平台账号需要多久？"
+  ],
+  "reason": "unsupported_question_aspect",
+  "trace": [
+    {
+      "step": 1,
+      "tool": "search_documents",
+      "arguments": {
+        "query": "新员工开通协作平台账号需要多久？",
+        "reason": "依据问题和上下文检索候选文档"
+      },
+      "result": {
+        "ok": true,
+        "candidates": [
+          {
+            "id": "D03",
+            "title": "员工协作平台账号指南",
+            "version_date": "2025-04-01"
+          }
+        ]
+      },
+      "decision_basis": "依据问题和上下文检索候选文档",
+      "next_action": "read_excerpt",
+      "next_action_relation": "scripted_sequence"
+    },
+    {
+      "step": 2,
+      "tool": "read_excerpt",
+      "arguments": {
+        "document_id": "D03",
+        "reason": "读取候选文档的当前原文"
+      },
+      "result": {
+        "ok": true,
+        "citation": {
+          "document_id": "D03",
+          "version_date": "2025-04-01",
+          "title": "员工协作平台账号指南",
+          "excerpt": "新员工可在入职当天通过企业服务台开通协作平台账号。"
+        }
+      },
+      "decision_basis": "读取候选文档的当前原文",
+      "next_action": "submit_decision",
+      "next_action_relation": "scripted_sequence"
+    },
+    {
+      "step": 3,
+      "tool": "submit_decision",
+      "arguments": {
+        "decision": "answer",
+        "document_ids": [
+          "D03"
+        ],
+        "reason": "汇总已读取的证据或说明资料缺口"
+      },
+      "result": {
+        "ok": true,
+        "accepted": true
+      },
+      "decision_basis": "汇总已读取的证据或说明资料缺口",
+      "next_action": "finish",
+      "next_action_relation": "terminal"
+    }
+  ],
+  "terminal": {
+    "status": "completed",
+    "source": "scripted_mock",
+    "tool_calls": 3
+  },
+  "agent_decision": {
+    "decision": "answer",
+    "document_ids": [
+      "D03"
+    ]
+  }
+}

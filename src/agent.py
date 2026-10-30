@@ -3,7 +3,7 @@
 import json
 import os
 
-from .business import KnowledgeTools, resolved_question
+from .business import KnowledgeTools, canonicalize, resolved_question
 
 
 def run_mock(service: KnowledgeTools) -> dict:
@@ -11,6 +11,11 @@ def run_mock(service: KnowledgeTools) -> dict:
     search = service.call("search_documents", {"query": resolved_question(service.request, service.docs), "reason": "依据问题和上下文检索候选文档"})
     if not search["ok"]:
         return service.output(terminal, {"decision": "stop", "document_ids": []})
+    canonical = canonicalize(resolved_question(service.request, service.docs))
+    if not search["candidates"] and canonical != resolved_question(service.request, service.docs):
+        search = service.call("search_documents", {"query": canonical, "reason": "离线 Mock 使用同义词表改写检索"})
+        if not search["ok"]:
+            return service.output(terminal, {"decision": "stop", "document_ids": []})
     ids = []
     for candidate in search["candidates"]:
         result = service.call("read_excerpt", {"document_id": candidate["id"], "reason": "读取候选文档的当前原文"})
@@ -62,7 +67,7 @@ async def run_glm(service: KnowledgeTools, max_turns: int = 12) -> dict:
              "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1", "CLAUDE_CODE_MAX_RETRIES": "0", "API_TIMEOUT_MS": "60000"},
         system_prompt=(
             "你是企业知识问答 Agent。仅使用提供的业务工具，不得使用历史对话中的助手回答充当证据。"
-            "先根据当前问题和必要的用户历史检索；本轮已有明确主题时忽略历史中的其他主题，代词追问才使用上一条用户问题。检索只返回候选元数据，你必须逐一读取所有相关候选原文。"
+            "先根据当前问题和必要的用户历史检索；本轮已有明确主题时忽略历史中的其他主题，代词追问才使用上一条用户问题。首次尽量按用户原词检索，再根据结果决定是否改写。检索只返回候选元数据，你必须逐一读取所有相关候选原文。"
             "如结果为空，可以改写问题补充检索；若没有支持资料就停止，不得编造。"
             "发现冲突时读取相关文档，要求用户确认适用范围或优先级，不能仅依据版本日期选一个。"
             "工具失败时可以重试或停止，不得称失败为成功。"

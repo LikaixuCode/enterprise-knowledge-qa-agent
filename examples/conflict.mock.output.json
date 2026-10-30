@@ -45,7 +45,8 @@
         ]
       },
       "decision_basis": "依据问题和上下文检索候选文档",
-      "next_action": "read_excerpt"
+      "next_action": "read_excerpt",
+      "next_action_relation": "scripted_sequence"
     },
     {
       "step": 2,
@@ -64,7 +65,8 @@
         }
       },
       "decision_basis": "读取候选文档的当前原文",
-      "next_action": "read_excerpt"
+      "next_action": "read_excerpt",
+      "next_action_relation": "scripted_sequence"
     },
     {
       "step": 3,
@@ -83,7 +85,8 @@
         }
       },
       "decision_basis": "读取候选文档的当前原文",
-      "next_action": "submit_decision"
+      "next_action": "submit_decision",
+      "next_action_relation": "scripted_sequence"
     },
     {
       "step": 4,
@@ -101,7 +104,8 @@
         "accepted": true
       },
       "decision_basis": "汇总已读取的证据或说明资料缺口",
-      "next_action": "finish"
+      "next_action": "finish",
+      "next_action_relation": "terminal"
     }
   ],
   "terminal": {

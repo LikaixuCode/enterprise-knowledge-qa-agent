@@ -25,7 +25,8 @@
         ]
       },
       "decision_basis": "依据问题和上下文检索候选文档",
-      "next_action": "read_excerpt"
+      "next_action": "read_excerpt",
+      "next_action_relation": "scripted_sequence"
     },
     {
       "step": 2,
@@ -40,7 +41,8 @@
         "message": "模拟工具失败"
       },
       "decision_basis": "读取候选文档的当前原文",
-      "next_action": "finish"
+      "next_action": "finish",
+      "next_action_relation": "terminal"
     }
   ],
   "terminal": {

@@ -1,0 +1,149 @@
+{
+  "mode": "glm",
+  "question": "那要提前多久申请？",
+  "status": "completed",
+  "answer": "[D04 2025-02-01] 员工应至少提前3个工作日提交年假申请。",
+  "citations": [
+    {
+      "document_id": "D04",
+      "version_date": "2025-02-01",
+      "title": "年假申请指南",
+      "excerpt": "员工应至少提前3个工作日提交年假申请。"
+    }
+  ],
+  "missing_information": [],
+  "reason": "supported_by_sources",
+  "trace": [
+    {
+      "step": 1,
+      "tool": "search_documents",
+      "arguments": {
+        "query": "员工年假申请规定 提前多久申请",
+        "reason": "用户追问年假需提前多久申请，按原词检索年假申请时限规定。"
+      },
+      "result": {
+        "ok": true,
+        "candidates": [
+          {
+            "id": "D04",
+            "title": "年假申请指南",
+            "version_date": "2025-02-01"
+          }
+        ]
+      },
+      "decision_basis": "用户追问年假需提前多久申请，按原词检索年假申请时限规定。",
+      "next_action": "read_excerpt",
+      "tool_use_id": "call_3328c92767554a7a8c4f03ad",
+      "model_message_id": "msg_202610310006439c66b7dbe17e466a",
+      "next_action_relation": "after_tool_result"
+    },
+    {
+      "step": 2,
+      "tool": "read_excerpt",
+      "arguments": {
+        "document_id": "D04",
+        "reason": "候选文档《年假申请指南》直接对应年假提前申请时限问题，需读取原文核实。"
+      },
+      "result": {
+        "ok": true,
+        "citation": {
+          "document_id": "D04",
+          "version_date": "2025-02-01",
+          "title": "年假申请指南",
+          "excerpt": "员工应至少提前3个工作日提交年假申请。"
+        }
+      },
+      "decision_basis": "候选文档《年假申请指南》直接对应年假提前申请时限问题，需读取原文核实。",
+      "next_action": "submit_decision",
+      "tool_use_id": "call_8addfac3151841ff9e6aaa13",
+      "model_message_id": "msg_20261031000645bdf1fe6dab6044f6",
+      "next_action_relation": "after_tool_result"
+    },
+    {
+      "step": 3,
+      "tool": "submit_decision",
+      "arguments": {
+        "decision": "answer",
+        "document_ids": [
+          "D04"
+        ],
+        "reason": "《年假申请指南》明确规定年假申请应至少提前3个工作日提交，可直接回答用户追问。"
+      },
+      "result": {
+        "ok": true,
+        "accepted": true
+      },
+      "decision_basis": "《年假申请指南》明确规定年假申请应至少提前3个工作日提交，可直接回答用户追问。",
+      "next_action": "finish",
+      "tool_use_id": "call_671a08c02e344ab8bf60fe51",
+      "model_message_id": "msg_202610310006503ff13cc4461740a9",
+      "next_action_relation": "terminal"
+    }
+  ],
+  "terminal": {
+    "status": "completed",
+    "reason": "completed",
+    "turns": 4,
+    "model": "glm-5.3-flash",
+    "reported_models": [
+      "glm-5.3-flash"
+    ],
+    "sdk_events": [
+      {
+        "type": "tool_request",
+        "tool_use_id": "call_3328c92767554a7a8c4f03ad",
+        "message_id": "msg_202610310006439c66b7dbe17e466a",
+        "tool": "mcp__knowledge__search_documents",
+        "arguments": {
+          "query": "员工年假申请规定 提前多久申请",
+          "reason": "用户追问年假需提前多久申请，按原词检索年假申请时限规定。"
+        }
+      },
+      {
+        "type": "tool_result",
+        "tool_use_id": "call_3328c92767554a7a8c4f03ad",
+        "is_error": null
+      },
+      {
+        "type": "tool_request",
+        "tool_use_id": "call_8addfac3151841ff9e6aaa13",
+        "message_id": "msg_20261031000645bdf1fe6dab6044f6",
+        "tool": "mcp__knowledge__read_excerpt",
+        "arguments": {
+          "document_id": "D04",
+          "reason": "候选文档《年假申请指南》直接对应年假提前申请时限问题，需读取原文核实。"
+        }
+      },
+      {
+        "type": "tool_result",
+        "tool_use_id": "call_8addfac3151841ff9e6aaa13",
+        "is_error": null
+      },
+      {
+        "type": "tool_request",
+        "tool_use_id": "call_671a08c02e344ab8bf60fe51",
+        "message_id": "msg_202610310006503ff13cc4461740a9",
+        "tool": "mcp__knowledge__submit_decision",
+        "arguments": {
+          "decision": "answer",
+          "document_ids": [
+            "D04"
+          ],
+          "reason": "《年假申请指南》明确规定年假申请应至少提前3个工作日提交，可直接回答用户追问。"
+        }
+      },
+      {
+        "type": "tool_result",
+        "tool_use_id": "call_671a08c02e344ab8bf60fe51",
+        "is_error": null
+      }
+    ],
+    "tool_calls": 3
+  },
+  "agent_decision": {
+    "decision": "answer",
+    "document_ids": [
+      "D04"
+    ]
+  }
+}
