@@ -1,0 +1,55 @@
+{
+  "mode": "mock",
+  "question": "Insight 产品支持什么格式的报表导出？",
+  "status": "incomplete",
+  "answer": "",
+  "citations": [],
+  "missing_information": [],
+  "reason": "tool_failure",
+  "trace": [
+    {
+      "step": 1,
+      "tool": "search_documents",
+      "arguments": {
+        "query": "Insight 产品支持什么格式的报表导出？",
+        "reason": "依据问题和上下文检索候选文档"
+      },
+      "result": {
+        "ok": true,
+        "candidates": [
+          {
+            "id": "D05",
+            "title": "Insight 产品 FAQ",
+            "version_date": "2025-06-01"
+          }
+        ]
+      },
+      "decision_basis": "依据问题和上下文检索候选文档",
+      "next_action": "read_excerpt"
+    },
+    {
+      "step": 2,
+      "tool": "read_excerpt",
+      "arguments": {
+        "document_id": "D05",
+        "reason": "读取候选文档的当前原文"
+      },
+      "result": {
+        "ok": false,
+        "error": "injected_tool_failure",
+        "message": "模拟工具失败"
+      },
+      "decision_basis": "读取候选文档的当前原文",
+      "next_action": "finish"
+    }
+  ],
+  "terminal": {
+    "status": "completed",
+    "source": "scripted_mock",
+    "tool_calls": 2
+  },
+  "agent_decision": {
+    "decision": "stop",
+    "document_ids": []
+  }
+}

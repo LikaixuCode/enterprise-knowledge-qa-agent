@@ -1,0 +1,106 @@
+[
+  {
+    "id": "D01",
+    "version_date": "2025-01-01",
+    "title": "差旅费用报销制度（示例 A）",
+    "key": "expense_deadline",
+    "aliases": [
+      "报销",
+      "差旅费用",
+      "费用报销",
+      "报销期限",
+      "报销时间",
+      "报销要多久",
+      "提交费用"
+    ],
+    "value": "30天",
+    "passage": "差旅费用须在费用发生后30天内提交报销。",
+    "aspects": [
+      "deadline"
+    ]
+  },
+  {
+    "id": "D02",
+    "version_date": "2026-01-01",
+    "title": "差旅费用报销制度（示例 B）",
+    "key": "expense_deadline",
+    "aliases": [
+      "报销",
+      "差旅费用",
+      "费用报销",
+      "报销期限",
+      "报销时间",
+      "报销要多久",
+      "提交费用"
+    ],
+    "value": "30天",
+    "passage": "差旅费用须在费用发生后30天内提交报销。",
+    "aspects": [
+      "deadline"
+    ]
+  },
+  {
+    "id": "D03",
+    "version_date": "2025-04-01",
+    "title": "员工协作平台账号指南",
+    "key": "account_open",
+    "aliases": [
+      "协作平台",
+      "协作系统",
+      "账号开通",
+      "开通账号",
+      "申请账号",
+      "新员工账号",
+      "登录权限",
+      "账号",
+      "账户",
+      "帐号"
+    ],
+    "value": "入职当天",
+    "passage": "新员工可在入职当天通过企业服务台开通协作平台账号。",
+    "aspects": [
+      "activation_time",
+      "application_method"
+    ],
+    "scope": "新员工"
+  },
+  {
+    "id": "D04",
+    "version_date": "2025-02-01",
+    "title": "年假申请指南",
+    "key": "leave_advance",
+    "aliases": [
+      "年假",
+      "休假申请",
+      "请年假",
+      "假期申请",
+      "带薪年休假",
+      "年度休假"
+    ],
+    "value": "3个工作日",
+    "passage": "员工应至少提前3个工作日提交年假申请。",
+    "aspects": [
+      "advance_notice"
+    ]
+  },
+  {
+    "id": "D05",
+    "version_date": "2025-06-01",
+    "title": "Insight 产品 FAQ",
+    "key": "product_export",
+    "aliases": [
+      "Insight",
+      "报表导出",
+      "导出报表",
+      "下载报表",
+      "导出CSV",
+      "导出文件",
+      "CSV"
+    ],
+    "value": "CSV",
+    "passage": "Insight 产品支持将报表导出为 CSV 文件。",
+    "aspects": [
+      "file_format"
+    ]
+  }
+]

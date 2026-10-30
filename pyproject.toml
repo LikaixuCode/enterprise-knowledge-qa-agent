@@ -1,0 +1,13 @@
+[project]
+name = "enterprise-knowledge-qa-agent"
+version = "0.1.0"
+description = "带原文引用与冲突处理的企业知识问答 Agent"
+requires-python = ">=3.12"
+dependencies = ["claude-agent-sdk==0.2.175", "pydantic>=2.10,<3"]
+
+[dependency-groups]
+dev = ["pytest>=8,<10"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

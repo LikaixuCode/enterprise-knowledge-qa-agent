@@ -1,0 +1,13 @@
+{
+  "status": "incomplete",
+  "reason": "missing_question",
+  "answer": "",
+  "citations": [],
+  "missing_information": [
+    "question"
+  ],
+  "trace": [],
+  "terminal": {
+    "status": "not_started"
+  }
+}

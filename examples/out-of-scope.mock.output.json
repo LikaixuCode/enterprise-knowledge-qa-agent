@@ -1,0 +1,51 @@
+{
+  "mode": "mock",
+  "question": "公司的食堂晚餐几点开始供应？",
+  "status": "incomplete",
+  "answer": "",
+  "citations": [],
+  "missing_information": [
+    "未检索到可支持回答的制度或产品资料"
+  ],
+  "reason": "out_of_scope",
+  "trace": [
+    {
+      "step": 1,
+      "tool": "search_documents",
+      "arguments": {
+        "query": "公司的食堂晚餐几点开始供应？",
+        "reason": "依据问题和上下文检索候选文档"
+      },
+      "result": {
+        "ok": true,
+        "candidates": []
+      },
+      "decision_basis": "依据问题和上下文检索候选文档",
+      "next_action": "submit_decision"
+    },
+    {
+      "step": 2,
+      "tool": "submit_decision",
+      "arguments": {
+        "decision": "stop",
+        "document_ids": [],
+        "reason": "汇总已读取的证据或说明资料缺口"
+      },
+      "result": {
+        "ok": true,
+        "accepted": true
+      },
+      "decision_basis": "汇总已读取的证据或说明资料缺口",
+      "next_action": "finish"
+    }
+  ],
+  "terminal": {
+    "status": "completed",
+    "source": "scripted_mock",
+    "tool_calls": 2
+  },
+  "agent_decision": {
+    "decision": "stop",
+    "document_ids": []
+  }
+}

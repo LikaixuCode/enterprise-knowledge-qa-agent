@@ -1,0 +1,85 @@
+{
+  "mode": "mock",
+  "question": "那要提前多久申请？",
+  "status": "completed",
+  "answer": "[D04 2025-02-01] 员工应至少提前3个工作日提交年假申请。",
+  "citations": [
+    {
+      "document_id": "D04",
+      "version_date": "2025-02-01",
+      "title": "年假申请指南",
+      "excerpt": "员工应至少提前3个工作日提交年假申请。"
+    }
+  ],
+  "missing_information": [],
+  "reason": "supported_by_sources",
+  "trace": [
+    {
+      "step": 1,
+      "tool": "search_documents",
+      "arguments": {
+        "query": "我想了解员工年假的申请规定。 那要提前多久申请？",
+        "reason": "依据问题和上下文检索候选文档"
+      },
+      "result": {
+        "ok": true,
+        "candidates": [
+          {
+            "id": "D04",
+            "title": "年假申请指南",
+            "version_date": "2025-02-01"
+          }
+        ]
+      },
+      "decision_basis": "依据问题和上下文检索候选文档",
+      "next_action": "read_excerpt"
+    },
+    {
+      "step": 2,
+      "tool": "read_excerpt",
+      "arguments": {
+        "document_id": "D04",
+        "reason": "读取候选文档的当前原文"
+      },
+      "result": {
+        "ok": true,
+        "citation": {
+          "document_id": "D04",
+          "version_date": "2025-02-01",
+          "title": "年假申请指南",
+          "excerpt": "员工应至少提前3个工作日提交年假申请。"
+        }
+      },
+      "decision_basis": "读取候选文档的当前原文",
+      "next_action": "submit_decision"
+    },
+    {
+      "step": 3,
+      "tool": "submit_decision",
+      "arguments": {
+        "decision": "answer",
+        "document_ids": [
+          "D04"
+        ],
+        "reason": "汇总已读取的证据或说明资料缺口"
+      },
+      "result": {
+        "ok": true,
+        "accepted": true
+      },
+      "decision_basis": "汇总已读取的证据或说明资料缺口",
+      "next_action": "finish"
+    }
+  ],
+  "terminal": {
+    "status": "completed",
+    "source": "scripted_mock",
+    "tool_calls": 3
+  },
+  "agent_decision": {
+    "decision": "answer",
+    "document_ids": [
+      "D04"
+    ]
+  }
+}
